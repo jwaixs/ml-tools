@@ -74,7 +74,7 @@ class CrossValidationLoader(object):
         batch_indices = self.train_indices[start:end]
         batch = [self.dataset[i] for i in batch_indices]
 
-        return np.array(batch)
+        return batch
 
     def has_next_valid_batch(self):
         return self.valid_batch_pos < len(self.valid_indices)
@@ -87,7 +87,7 @@ class CrossValidationLoader(object):
         batch_indices = self.valid_indices[start:end]
         batch = [self.dataset[i] for i in batch_indices]
 
-        return np.array(batch)
+        return batch
 
     def train(self, batch_size):
         while self.has_next_train_batch():
@@ -108,5 +108,17 @@ if __name__ == '__main__':
         for batch in fold.train(4):
             print(batch)
         print('valid')
+        for batch in fold.valid(4):
+            print(batch)
+
+    from sklearn.datasets import load_iris
+
+    iris = load_iris()
+    iris_list = [(iris['target'][i], iris['data'][i]) for i in range(150)]
+    cv_loader = CrossValidationLoader(iris_list, shuffle=True)
+
+    for fold in cv_loader.fold():
+        for batch in fold.train(4):
+            print(batch)
         for batch in fold.valid(4):
             print(batch)
